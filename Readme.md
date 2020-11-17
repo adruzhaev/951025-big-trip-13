@@ -1,7 +1,7 @@
 # Проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Андрей](https://up.htmlacademy.ru/ecmascript/13/user/951025).
-* Наставник: `Неизвестно`.
+* Наставник: `Без наставника`.
 
 ---
 
