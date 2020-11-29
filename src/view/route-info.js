@@ -1,3 +1,5 @@
+import {createElement} from "../utils";
+
 const destinationPointsSearch = (points) => {
   let destinationPoints = [];
 
@@ -18,7 +20,7 @@ const totalPriceCount = (points) => {
   return totalPrice;
 };
 
-export const createRouteInfoTemplate = (points) => {
+const createRouteInfoTemplate = (points) => {
   const pointsOfDestination = (destinationPointsSearch(points).length > 3) ?
     `${destinationPointsSearch(points)[0]} &mdash; &mldr; &mdash; ${destinationPointsSearch(points)[destinationPointsSearch(points).length - 1]}`
     : destinationPointsSearch(points).join(` &mdash; `);
@@ -36,3 +38,27 @@ export const createRouteInfoTemplate = (points) => {
     </p>
   </section>`;
 };
+
+export default class RouteInfo {
+  constructor(points) {
+    this._points = points;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRouteInfoTemplate(this._points);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
