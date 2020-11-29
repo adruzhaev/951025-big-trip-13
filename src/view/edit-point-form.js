@@ -1,3 +1,4 @@
+import {createElement} from "../utils";
 import {POINTTYPES, OFFERSTYPES, OFFERSNAMES} from "../const";
 import flatpickr from "flatpickr";
 
@@ -56,7 +57,7 @@ const creatDestinationTemplate = (destination) => {
   `;
 };
 
-export const createEditFormTemplate = (point = {}) => {
+const createEditFormTemplate = (point = {}) => {
 
   const {pointType, destinationName, price = ``, startTimeEvt, endTimeEvt, offers = null, destinationInfo = null} = point;
 
@@ -131,3 +132,27 @@ export const createEditFormTemplate = (point = {}) => {
     </form>
   </li>`;
 };
+
+export default class PointEdit {
+  constructor(point) {
+    this._point = point;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditFormTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

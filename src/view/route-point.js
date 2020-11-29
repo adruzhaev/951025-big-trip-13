@@ -1,4 +1,6 @@
-export const createRoutePointTemplate = (point) => {
+import {createElement} from "../utils";
+
+const createRoutePointTemplate = (point) => {
 
   const {pointType, destinationName, price} = point;
 
@@ -40,3 +42,27 @@ export const createRoutePointTemplate = (point) => {
     </div>
   </li>`;
 };
+
+export default class Point {
+  constructor(point) {
+    this._point = point;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRoutePointTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

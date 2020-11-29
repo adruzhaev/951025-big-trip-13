@@ -1,3 +1,5 @@
+import {createElement} from "../utils";
+
 const createSortingTypeTemplate = (sortingTypeName) => {
   return `
     <div class="trip-sort__item  trip-sort__item--${sortingTypeName.toLowerCase()}">
@@ -14,3 +16,25 @@ export const createSortingTemplate = () => {
   ${sortingTypes.map((sortingType) => createSortingTypeTemplate(sortingType)).join(``)}
   </form>`;
 };
+
+export default class Sort {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSortingTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
