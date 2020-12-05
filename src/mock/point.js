@@ -1,5 +1,5 @@
 import flatpickr from "flatpickr";
-import {getRandomInt} from "../utils";
+import {getRandomInt} from "../utils/common";
 import {POINTTYPES, OFFERSTYPES, CITIES, OFFERSNAMES} from "../const";
 
 const generatePointType = () => {
