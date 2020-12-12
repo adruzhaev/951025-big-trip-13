@@ -2,6 +2,8 @@ import flatpickr from "flatpickr";
 import {getRandomInt} from "../utils/common";
 import {POINTTYPES, OFFERSTYPES, CITIES, OFFERSNAMES} from "../const";
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generatePointType = () => {
   const randomIndex = getRandomInt(0, POINTTYPES.length - 1);
 
@@ -80,6 +82,7 @@ const randomDate = (start, end) => {
 
 export const generatePoint = () => {
   return {
+    id: generateId(),
     pointType: generatePointType(),
     destinationName: generateDestination(),
     startTimeEvt: randomDate(new Date(), new Date(2040, 1, 0)),
@@ -87,6 +90,7 @@ export const generatePoint = () => {
     price: parseInt(getRandomInt(1, 1000), 10),
     offers: generateOffers(),
     destinationInfo: generateDestinationInfo(),
+    isFavorite: Boolean(getRandomInt(0, 1)),
   };
 };
 
