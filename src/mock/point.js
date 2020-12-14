@@ -85,7 +85,7 @@ export const generatePoint = () => {
     id: generateId(),
     pointType: generatePointType(),
     destinationName: generateDestination(),
-    startTimeEvt: randomDate(new Date(), new Date(2040, 1, 0)),
+    startTimeEvt: randomDate(new Date(), new Date(2020, 1, 0)),
     endTimeEvt: flatpickr.formatDate(new Date(), `d/m/y H:i`),
     price: parseInt(getRandomInt(1, 1000), 10),
     offers: generateOffers(),

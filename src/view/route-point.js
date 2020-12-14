@@ -1,8 +1,12 @@
 import AbstractView from "./abstract";
+import flatpickr from "flatpickr";
 
 const createRoutePointTemplate = (point) => {
 
-  const {pointType, destinationName, price, isFavorite} = point;
+  const {pointType, destinationName, price, startTimeEvt, isFavorite} = point;
+
+  const day = flatpickr.formatDate(startTimeEvt, `M d`).toUpperCase();
+  const dateTime = flatpickr.formatDate(startTimeEvt, `yy-m-d`);
 
   const favoriteClassName = isFavorite
     ? `event__favorite-btn event__favorite-btn--active`
@@ -10,7 +14,7 @@ const createRoutePointTemplate = (point) => {
 
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">MAR 18</time>
+      <time class="event__date" datetime="${dateTime}">${day}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${pointType.toLowerCase()}.png" alt="Event type icon">
       </div>
