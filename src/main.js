@@ -8,6 +8,7 @@ import {render, RenderPosition} from '../src/utils/render';
 
 const ROUTE_POINTS_NUMBER = 10;
 const points = new Array(ROUTE_POINTS_NUMBER).fill().map(generatePoint);
+const defaultSortedPoints = points.sort((a, b) => a.startTimeEvt > b.startTimeEvt ? 1 : -1);
 
 const siteMainHeaderElement = document.querySelector(`.trip-main`);
 const siteControlsElement = siteMainHeaderElement.querySelector(`.trip-main__trip-controls`);
@@ -19,4 +20,4 @@ render(siteControlsElement, new FiltersView(), RenderPosition.BEFOREEND);
 const siteTripEventsElement = document.querySelector(`.trip-events`);
 
 const tripPresenter = new TripPresenter(siteTripEventsElement);
-tripPresenter.init(points);
+tripPresenter.init(defaultSortedPoints);
