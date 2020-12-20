@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import {getRandomInt} from "../utils/common";
-import {POINTTYPES, OFFERSTYPES, CITIES, OFFERSNAMES} from "../const";
+import {POINTTYPES, OFFERSTYPES, CITIES} from "../const";
 
 const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
@@ -10,11 +10,11 @@ const generatePointType = () => {
   return POINTTYPES[randomIndex];
 };
 
-const generateOffersType = () => {
-  const randomIndex = getRandomInt(0, OFFERSTYPES.length - 1);
+// const generateOffersType = () => {
+//   const randomIndex = getRandomInt(0, OFFERSTYPES.length - 1);
 
-  return OFFERSTYPES[randomIndex];
-};
+//   return OFFERSTYPES[randomIndex];
+// };
 
 const generateDestination = () => {
   const randomIndex = getRandomInt(0, CITIES.length - 1);
@@ -22,26 +22,24 @@ const generateDestination = () => {
   return CITIES[randomIndex];
 };
 
-const generateOfferName = () => {
-  const randomIndex = getRandomInt(0, OFFERSNAMES.length - 1);
+// const generateOfferName = () => {
+//   const randomIndex = getRandomInt(0, OFFERSNAMES.length - 1);
 
-  return OFFERSNAMES[randomIndex];
-};
+//   return OFFERSNAMES[randomIndex];
+// };
 
-const generateOffers = () => {
+// const generateOffers = () => {
 
-  const isOffers = getRandomInt(0, 1);
+//   return {
+//     type: generatePointType(),
+//     name: generateOfferName(),
+//     price: parseInt(getRandomInt(1, 200), 10),
+//   };
+// };
 
-  if (!isOffers) {
-    return null;
-  }
-
-  return {
-    type: generateOffersType(),
-    name: generateOfferName(),
-    price: parseInt(getRandomInt(1, 200), 10),
-  };
-};
+// const generateOffersArray = (count) => {
+//   return new Array(count).fill().map(generateOffers);
+// };
 
 const generateDescription = () => {
   const descriptions = [
@@ -62,7 +60,7 @@ const generatePhotos = () => {
   return photos.slice(getRandomInt(0, photos.length - 1), photos.length - 1);
 };
 
-const generateDestinationInfo = () => {
+export const generateDestinationInfo = () => {
 
   const isInfo = getRandomInt(0, 1);
 
@@ -74,6 +72,25 @@ const generateDestinationInfo = () => {
     description: generateDescription(),
     photos: generatePhotos(),
   };
+};
+
+export const generateOffers = (type) => {
+
+  const offersList = OFFERSTYPES[type];
+
+  if (offersList.length === 0) {
+    return null;
+  }
+
+  const offers = {};
+
+  offersList.forEach((sight) => {
+    offers[sight] = {};
+    offers[sight].price = parseInt(getRandomInt(1, 200), 10);
+    offers[sight].isActive = Boolean(getRandomInt(0, 1));
+  });
+
+  return offers;
 };
 
 const randomDate = (start, end) => {
@@ -88,7 +105,8 @@ export const generatePoint = () => {
     startTimeEvt: randomDate(new Date(), new Date(2020, 1, 0)),
     endTimeEvt: flatpickr.formatDate(new Date(), `d/m/y H:i`),
     price: parseInt(getRandomInt(1, 1000), 10),
-    offers: generateOffers(),
+    // offers: generateOffersArray(getRandomInt(0, 5)),
+    offers: generateOffers(generatePointType()),
     destinationInfo: generateDestinationInfo(),
     isFavorite: Boolean(getRandomInt(0, 1)),
   };
