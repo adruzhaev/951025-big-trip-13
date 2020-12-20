@@ -1,13 +1,24 @@
 import AbstractView from "./abstract";
 import flatpickr from "flatpickr";
 
+const createOffersTemplate = (offers) => {
+  const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
+
+  return activeOffers.map(([key, value]) => {
+    return (`<li class="event__offer">
+      <span class="event__offer-title">${key}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${value.price}</span>
+    </li>`);
+  }).join(``);
+};
 const createRoutePointTemplate = (point) => {
 
-  const {pointType, destinationName, price, startTimeEvt, isFavorite} = point;
+  const {pointType, destinationName, price, offers, startTimeEvt, isFavorite} = point;
 
+  const pointOffersTemaplate = offers === null ? `` : createOffersTemplate(offers);
   const day = flatpickr.formatDate(startTimeEvt, `M d`).toUpperCase();
   const dateTime = flatpickr.formatDate(startTimeEvt, `yy-m-d`);
-
   const favoriteClassName = isFavorite
     ? `event__favorite-btn event__favorite-btn--active`
     : `event__favorite-btn`;
@@ -32,11 +43,7 @@ const createRoutePointTemplate = (point) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Order Uber</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">20</span>
-        </li>
+        ${pointOffersTemaplate}
       </ul>
       <button class="${favoriteClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>
