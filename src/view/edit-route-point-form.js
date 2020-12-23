@@ -1,8 +1,11 @@
 import SmartView from "./smart";
 import {POINTTYPES, CITIES} from "../const";
 import flatpickr from "flatpickr";
+import dayjs from "dayjs";
 import {generateOffers, generateDestinationInfo} from "../mock/point";
 import {capitalize} from "../utils/common";
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_POINT = {
   id: ``,
@@ -83,13 +86,14 @@ const creatDestinationTemplate = (destination) => {
 
 const createEditFormTemplate = (data = {}) => {
 
-  const {pointType, destinationName, price = ``, startTimeEvt, endTimeEvt, offers = null, destinationInfo} = data;
+  const {pointType, destinationName, price = ``, date, offers = null, destinationInfo} = data;
   const pointTypesTemaplate = createPointTypeTemplate(pointType);
 
   const offersTemplate = offers === null ? `` : createOffersTemplate(offers);
   const destination = destinationInfo === null ? `` : creatDestinationTemplate(destinationInfo);
 
-  const startTime = flatpickr.formatDate(startTimeEvt, `d/m/y H:i`);
+  const startTime = dayjs(date.startTimeEvt).format(`DD/MM/YYYY HH:MM`);
+  const endTime = dayjs(date.endTimeEvt).format(`DD/MM/YYYY HH:MM`);
   const cities = createCitiesTemplate();
 
   return `<li class="trip-events__item">
@@ -125,7 +129,7 @@ const createEditFormTemplate = (data = {}) => {
           <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTimeEvt}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -160,8 +164,8 @@ const createEditFormTemplate = (data = {}) => {
 export default class PointEdit extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
-    // this._point = point;
     this._data = PointEdit.parsePointToData(point);
+    this._datepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
@@ -169,8 +173,11 @@ export default class PointEdit extends SmartView {
     this._offersChangeHandler = this._offersChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatePicker();
   }
 
   reset(point) {
@@ -185,8 +192,62 @@ export default class PointEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatePicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
+  }
+
+  _setDatePicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    if (this._data.date.startTimeEvt) {
+      this._datepicker = flatpickr(
+          this.getElement().querySelector(`#event-start-time-1`),
+          {
+            dateFormat: `d/m/Y H:i`,
+            defaultDate: this._data.date.startTimeEvt,
+            onChange: this._startDateChangeHandler
+          }
+      );
+    }
+
+    if (this._data.date.endTimeEvt) {
+      this._datepicker = flatpickr(
+          this.getElement().querySelector(`#event-end-time-1`),
+          {
+            dateFormat: `d/m/Y H:i`,
+            defaultDate: this._data.date.endTimeEvt,
+            onChange: this._endDateChangeHandler
+          }
+      );
+    }
+  }
+
+  _startDateChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+          {},
+          this._data.date,
+          {
+            startTimeEvt: dayjs(userDate).hour(23).minute(59).second(59).toDate()
+          }
+      )
+    });
+  }
+
+  _endDateChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+          {},
+          this._data.date,
+          {
+            endTimeEvt: dayjs(userDate).hour(23).minute(59).second(59).toDate()
+          }
+      )
+    });
   }
 
   _setInnerHandlers() {

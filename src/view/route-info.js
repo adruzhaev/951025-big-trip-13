@@ -1,4 +1,5 @@
 import AbstractView from "./abstract";
+import dayjs from "dayjs";
 
 const destinationPointsSearch = (points) => {
   let destinationPoints = [];
@@ -26,11 +27,14 @@ const createRouteInfoTemplate = (points) => {
     : destinationPointsSearch(points).join(` &mdash; `);
   const totalPrice = totalPriceCount(points);
 
+  const startTime = dayjs(points[0].date.startTimeEvt).format(`MMM DD`);
+  const endTime = dayjs(points[points.length - 2].date.endTimeEvt).format(`DD`);
+
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${pointsOfDestination}</h1>
 
-      <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+      <p class="trip-info__dates">${startTime}&nbsp;&mdash;&nbsp;${endTime}</p>
     </div>
 
     <p class="trip-info__cost">
