@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-import flatpickr from "flatpickr";
+import dayjs from "dayjs";
 
 const createOffersTemplate = (offers) => {
   const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
@@ -14,11 +14,15 @@ const createOffersTemplate = (offers) => {
 };
 const createRoutePointTemplate = (point) => {
 
-  const {pointType, destinationName, price, offers, startTimeEvt, isFavorite} = point;
+  const {pointType, destinationName, price, offers, date, isFavorite} = point;
 
   const pointOffersTemaplate = offers === null ? `` : createOffersTemplate(offers);
-  const day = flatpickr.formatDate(startTimeEvt, `M d`).toUpperCase();
-  const dateTime = flatpickr.formatDate(startTimeEvt, `yy-m-d`);
+  const day = dayjs(date.startTimeEvt).format(`MMM DD`);
+  const dateTime = dayjs(date.startTimeEvt).format(`YYYY-MM-D`);
+
+  const startTime = dayjs(date.startTimeEvt).format(`hh:mm`);
+  const endTime = dayjs(date.endTimeEvt).format(`hh:mm`);
+
   const favoriteClassName = isFavorite
     ? `event__favorite-btn event__favorite-btn--active`
     : `event__favorite-btn`;
@@ -32,9 +36,9 @@ const createRoutePointTemplate = (point) => {
       <h3 class="event__title">${pointType} ${destinationName}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+          <time class="event__start-time" datetime="2019-03-18T10:30">${startTime}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+          <time class="event__end-time" datetime="2019-03-18T11:00">${endTime}</time>
         </p>
         <p class="event__duration">30M</p>
       </div>

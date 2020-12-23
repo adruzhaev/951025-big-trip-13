@@ -1,4 +1,4 @@
-import flatpickr from "flatpickr";
+import dayjs from "dayjs";
 import {getRandomInt} from "../utils/common";
 import {POINTTYPES, OFFERSTYPES, CITIES} from "../const";
 
@@ -10,36 +10,11 @@ const generatePointType = () => {
   return POINTTYPES[randomIndex];
 };
 
-// const generateOffersType = () => {
-//   const randomIndex = getRandomInt(0, OFFERSTYPES.length - 1);
-
-//   return OFFERSTYPES[randomIndex];
-// };
-
 const generateDestination = () => {
   const randomIndex = getRandomInt(0, CITIES.length - 1);
 
   return CITIES[randomIndex];
 };
-
-// const generateOfferName = () => {
-//   const randomIndex = getRandomInt(0, OFFERSNAMES.length - 1);
-
-//   return OFFERSNAMES[randomIndex];
-// };
-
-// const generateOffers = () => {
-
-//   return {
-//     type: generatePointType(),
-//     name: generateOfferName(),
-//     price: parseInt(getRandomInt(1, 200), 10),
-//   };
-// };
-
-// const generateOffersArray = (count) => {
-//   return new Array(count).fill().map(generateOffers);
-// };
 
 const generateDescription = () => {
   const descriptions = [
@@ -93,8 +68,25 @@ export const generateOffers = (type) => {
   return offers;
 };
 
-const randomDate = (start, end) => {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+// const randomDate = (start, end) => {
+//   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+// };
+
+const generateDates = () => {
+  const maxDaysGap = 7;
+  const durationStep = 3;
+  const maxDurationDays = 7;
+
+  const daysGap = getRandomInt(-maxDaysGap, maxDaysGap);
+  const step = (maxDurationDays * 24) / (durationStep / 60);
+
+  const startTimeEvt = dayjs().add(daysGap, `day`).add(getRandomInt(1, step) * durationStep, `minute`).toDate();
+  const endTimeEvt = dayjs(startTimeEvt).add(getRandomInt(1, step) * durationStep, `minute`).toDate();
+
+  return {
+    startTimeEvt,
+    endTimeEvt,
+  };
 };
 
 export const generatePoint = () => {
@@ -102,8 +94,9 @@ export const generatePoint = () => {
     id: generateId(),
     pointType: generatePointType(),
     destinationName: generateDestination(),
-    startTimeEvt: randomDate(new Date(), new Date(2020, 1, 0)),
-    endTimeEvt: flatpickr.formatDate(new Date(), `d/m/y H:i`),
+    // startTimeEvt: randomDate(new Date(), new Date(2020, 1, 0)),
+    // endTimeEvt: flatpickr.formatDate(new Date(), `d/m/y H:i`),
+    date: generateDates(),
     price: parseInt(getRandomInt(1, 1000), 10),
     // offers: generateOffersArray(getRandomInt(0, 5)),
     offers: generateOffers(generatePointType()),
