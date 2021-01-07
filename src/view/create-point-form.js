@@ -144,10 +144,7 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
         ${offersTemplate === `` ? `` : `
@@ -164,10 +161,10 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
   </li>`;
 };
 
-export default class PointEdit extends SmartView {
+export default class PointNew extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
-    this._data = PointEdit.parsePointToData(point);
+    this._data = PointNew.parsePointToData(point);
     this._datepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -195,7 +192,7 @@ export default class PointEdit extends SmartView {
 
   reset(point) {
     this.updateData(
-        PointEdit.parseDataToPoint(point)
+        PointNew.parseDataToPoint(point)
     );
   }
 
@@ -332,7 +329,7 @@ export default class PointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(PointEdit.parseDataToPoint(this._data));
+    this._callback.formSubmit(PointNew.parseDataToPoint(this._data));
   }
 
   _editClickHandler(evt) {
@@ -352,7 +349,7 @@ export default class PointEdit extends SmartView {
 
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteClick(PointEdit.parseDataToPoint(this._data));
+    this._callback.deleteClick(PointNew.parseDataToPoint(this._data));
   }
 
   setDeleteClickHandler(callback) {

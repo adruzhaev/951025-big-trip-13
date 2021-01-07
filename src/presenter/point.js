@@ -1,6 +1,8 @@
 import PointView from '../view/route-point';
 import PointEditView from '../view/edit-route-point-form';
 import {render, RenderPosition, replace, remove} from '../utils/render';
+import {UserAction, UpdateType} from '../const';
+import {isDatesEqual} from '../utils/point';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -22,6 +24,7 @@ export default class Point {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleEditFormClick = this._handleEditFormClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(point) {
@@ -37,6 +40,7 @@ export default class Point {
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditPointComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditPointComponent.setEditClickHandler(this._handleEditFormClick);
+    this._pointEditPointComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
       render(this._tripComponent, this._pointComponent, RenderPosition.BEFOREEND);
@@ -96,13 +100,20 @@ export default class Point {
     this._replaceEditFormToPoint();
   }
 
-  _handleFormSubmit(point) {
-    this._changeData(point);
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._point.date, update.date);
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update
+    );
     this._replaceEditFormToPoint();
   }
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._point,
@@ -110,6 +121,14 @@ export default class Point {
               isFavorite: !this._point.isFavorite
             }
         )
+    );
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point
     );
   }
 }

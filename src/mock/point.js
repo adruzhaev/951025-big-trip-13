@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {getRandomInt} from "../utils/common";
 import {POINTTYPES, OFFERSTYPES, CITIES} from "../const";
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generatePointType = () => {
   const randomIndex = getRandomInt(0, POINTTYPES.length - 1);
@@ -94,8 +94,6 @@ export const generatePoint = () => {
     id: generateId(),
     pointType: generatePointType(),
     destinationName: generateDestination(),
-    // startTimeEvt: randomDate(new Date(), new Date(2020, 1, 0)),
-    // endTimeEvt: flatpickr.formatDate(new Date(), `d/m/y H:i`),
     date: generateDates(),
     price: parseInt(getRandomInt(1, 1000), 10),
     // offers: generateOffersArray(getRandomInt(0, 5)),
