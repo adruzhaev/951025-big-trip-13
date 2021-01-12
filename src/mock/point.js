@@ -68,10 +68,6 @@ export const generateOffers = (type) => {
   return offers;
 };
 
-// const randomDate = (start, end) => {
-//   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-// };
-
 const generateDates = () => {
   const maxDaysGap = 7;
   const durationStep = 3;
@@ -96,7 +92,6 @@ export const generatePoint = () => {
     destinationName: generateDestination(),
     date: generateDates(),
     price: parseInt(getRandomInt(1, 1000), 10),
-    // offers: generateOffersArray(getRandomInt(0, 5)),
     offers: generateOffers(generatePointType()),
     destinationInfo: generateDestinationInfo(),
     isFavorite: Boolean(getRandomInt(0, 1)),
