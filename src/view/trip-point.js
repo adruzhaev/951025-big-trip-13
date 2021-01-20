@@ -2,26 +2,26 @@ import AbstractView from "./abstract";
 import dayjs from "dayjs";
 
 const createOffersTemplate = (offers) => {
-  const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
+  // const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
 
-  return activeOffers.map(([key, value]) => {
+  return offers.map(({title, price}) => {
     return (`<li class="event__offer">
-      <span class="event__offer-title">${key}</span>
+      <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${value.price}</span>
+      <span class="event__offer-price">${price}</span>
     </li>`);
   }).join(``);
 };
 const createRoutePointTemplate = (point) => {
 
-  const {pointType, destinationName, price, offers, date, isFavorite} = point;
+  const {type, destinationName, price, offers, date, isFavorite} = point;
 
   const pointOffersTemaplate = offers === null ? `` : createOffersTemplate(offers);
-  const day = dayjs(date.startTimeEvt).format(`MMM DD`);
-  const dateTime = dayjs(date.startTimeEvt).format(`YYYY-MM-D`);
+  const day = dayjs(date.startTime).format(`MMM DD`);
+  const dateTime = dayjs(date.startTime).format(`YYYY-MM-D`);
 
-  const startTime = dayjs(date.startTimeEvt).format(`hh:mm`);
-  const endTime = dayjs(date.endTimeEvt).format(`hh:mm`);
+  const startTime = dayjs(date.startTime).format(`hh:mm`);
+  const endTime = dayjs(date.endTime).format(`hh:mm`);
 
   const favoriteClassName = isFavorite
     ? `event__favorite-btn event__favorite-btn--active`
@@ -31,9 +31,9 @@ const createRoutePointTemplate = (point) => {
     <div class="event">
       <time class="event__date" datetime="${dateTime}">${day}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${pointType.toLowerCase()}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${pointType} ${destinationName}</h3>
+      <h3 class="event__title">${type} ${destinationName}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="2019-03-18T10:30">${startTime}</time>

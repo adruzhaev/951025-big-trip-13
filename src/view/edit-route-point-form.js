@@ -5,16 +5,17 @@ import flatpickr from "flatpickr";
 import dayjs from "dayjs";
 import {generateOffers, generateDestinationInfo} from "../mock/point";
 import {capitalize} from "../utils/common";
+import Store from '../store';
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_POINT = {
   id: ``,
-  pointType: `taxi`,
+  type: `taxi`,
   destinationName: ``,
   date: {
-    startTimeEvt: new Date(),
-    endTimeEvt: new Date(),
+    startTime: new Date(),
+    endTime: new Date(),
   },
   price: 0,
   offers: null,
@@ -39,30 +40,33 @@ const createPointTypeTemplate = (currentPointType) => {
     `;
   }).join(``);
 };
-const createOffersTemplate = (offers) => {
-  return Object.entries(offers).map(([key, value]) => {
-
-    return `
+const createOffersTemplate = (activeType, activeOffers) => {
+  const {offers} = Store.getOffers().find((offer) => offer.type === activeType);
+  return offers.map(({title, price}) => {
+    const isActiveOffer = activeOffers.find((offer) => offer.title === title) ? `checked` : ``;
+    return (`
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
-          id="event-offer-${key.split(` `).join(`-`)}-1" type="checkbox"
-          data-value="${key}"
-          name="event-offer-${key.split(` `).join(`-`)}" ${value.isActive ? `checked` : ``}
+          id="event-offer-${title.split(` `).join(`-`)}-1" type="checkbox"
+          data-value="${title}"
+          name="event-offer-${title.split(` `).join(`-`)}" }
+          ${isActiveOffer}
+
         >
-        <label class="event__offer-label" for="event-offer-${key.split(` `).join(`-`)}-1">
-          <span class="event__offer-title">${key}</span>
+        <label class="event__offer-label" for="event-offer-${title.split(` `).join(`-`)}-1">
+          <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${value.price}</span>
+          <span class="event__offer-price">${price}</span>
         </label>
       </div>
-    `;
+    `);
   }).join(``);
 };
 
 const renderPhotos = (photos) => {
   return photos.map((photo) => {
     return `
-      <img class="event__photo" src="${photo}" alt="Event photo">
+      <img class="event__photo" src="${photo.src}" alt="${photo.description}">
     `;
   }).join(``);
 };
@@ -89,14 +93,14 @@ const creatDestinationTemplate = (destination) => {
 
 const createEditFormTemplate = (data = BLANK_POINT) => {
 
-  const {pointType, destinationName, price = ``, date, offers = null, destinationInfo} = data;
-  const pointTypesTemaplate = createPointTypeTemplate(pointType);
+  const {type, destinationName, price, date, offers = null, destinationInfo, isOffers} = data;
+  const pointTypesTemaplate = createPointTypeTemplate(type);
 
-  const offersTemplate = offers === null ? `` : createOffersTemplate(offers);
+  const offersTemplate = isOffers ? createOffersTemplate(type, offers) : ``;
   const destination = destinationInfo === null ? `` : creatDestinationTemplate(destinationInfo);
 
-  const startTime = dayjs(date.startTimeEvt).format(`DD/MM/YYYY HH:MM`);
-  const endTime = dayjs(date.endTimeEvt).format(`DD/MM/YYYY HH:MM`);
+  const startTime = dayjs(date.startTime).format(`DD/MM/YYYY HH:MM`);
+  const endTime = dayjs(date.endTime).format(`DD/MM/YYYY HH:MM`);
   const cities = createCitiesTemplate();
 
   return `<li class="trip-events__item">
@@ -105,7 +109,7 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${pointType.toLocaleLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLocaleLowerCase()}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -119,7 +123,7 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${pointType}
+            ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" name="event-destination-1" value="${he.encode(destinationName)}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -150,14 +154,14 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
         </button>
       </header>
       <section class="event__details">
-        ${offersTemplate === `` ? `` : `
+
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
               ${offersTemplate}
             </div>
           </section>
-        `}
+
         ${destination}
       </section>
     </form>
@@ -217,23 +221,23 @@ export default class PointEdit extends SmartView {
       this._datepicker = null;
     }
 
-    if (this._data.date.startTimeEvt) {
+    if (this._data.date.startTime) {
       this._datepicker = flatpickr(
           this.getElement().querySelector(`#event-start-time-1`),
           {
             dateFormat: `d/m/Y H:i`,
-            defaultDate: this._data.date.startTimeEvt,
+            defaultDate: this._data.date.startTime,
             onChange: this._startDateChangeHandler
           }
       );
     }
 
-    if (this._data.date.endTimeEvt) {
+    if (this._data.date.endTime) {
       this._datepicker = flatpickr(
           this.getElement().querySelector(`#event-end-time-1`),
           {
             dateFormat: `d/m/Y H:i`,
-            defaultDate: this._data.date.endTimeEvt,
+            defaultDate: this._data.date.endTime,
             onChange: this._endDateChangeHandler
           }
       );
@@ -246,7 +250,7 @@ export default class PointEdit extends SmartView {
           {},
           this._data.date,
           {
-            startTimeEvt: dayjs(userDate).hour(23).minute(59).second(59).toDate()
+            startTime: dayjs(userDate).hour(23).minute(59).second(59).toDate()
           }
       )
     });
@@ -258,7 +262,7 @@ export default class PointEdit extends SmartView {
           {},
           this._data.date,
           {
-            endTimeEvt: dayjs(userDate).hour(23).minute(59).second(59).toDate()
+            endTime: dayjs(userDate).hour(23).minute(59).second(59).toDate()
           }
       )
     });
@@ -288,7 +292,7 @@ export default class PointEdit extends SmartView {
     const newOffers = generateOffers(capitalize(evt.target.value));
     evt.preventDefault();
     this.updateData({
-      pointType: capitalize(evt.target.value),
+      type: capitalize(evt.target.value),
       offers: newOffers,
     });
   }
@@ -363,7 +367,11 @@ export default class PointEdit extends SmartView {
   static parsePointToData(point) {
     return Object.assign(
         {},
-        point
+        point,
+        {
+          isOffers: point.offers.length > 0,
+          isImages: point.destinationInfo.photos,
+        }
     );
   }
 
