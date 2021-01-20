@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 
 export const sortPointByDay = (pointA, pointB) => {
-  return pointA.date.startTimeEvt - pointB.date.startTimeEvt;
+  return pointA.date.startTime - pointB.date.startTime;
 };
 
 export const sortPointByTime = (pointA, pointB) => {
-  const durationA = dayjs(pointA.date.startTimeEvt).diff(dayjs(pointA.date.endTimeEvt));
-  const durationB = dayjs(pointB.date.startTimeEvt).diff(dayjs(pointB.date.endTimeEvt));
+  const durationA = dayjs(pointA.date.startTime).diff(dayjs(pointA.date.endTime));
+  const durationB = dayjs(pointB.date.startTime).diff(dayjs(pointB.date.endTime));
 
   return durationA - durationB;
 };
@@ -25,4 +25,4 @@ export const isPointPast = (date) => {
 
 export const isPointFuture = (date) => {
   return dayjs(date).diff(dayjs()) >= 0;
-}
+};

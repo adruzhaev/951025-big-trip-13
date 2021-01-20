@@ -1,4 +1,4 @@
-import PointView from '../view/route-point';
+import PointView from '../view/trip-point';
 import PointEditView from '../view/edit-route-point-form';
 import {render, RenderPosition, replace, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../const';

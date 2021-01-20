@@ -6,7 +6,7 @@ import {makeUniquePoints, countMoneyByType, countTypesByType, countDurationByTyp
 const BAR_HEIGHT = 55;
 
 const renderMoneyChart = (moneyCtx, points) => {
-  const pointsTypes = points.map((point) => point.pointType);
+  const pointsTypes = points.map((point) => point.type);
   const uniquePoints = makeUniquePoints(pointsTypes);
   const moneyByTypes = uniquePoints.map((type) => countMoneyByType(points, type));
 
@@ -79,7 +79,7 @@ const renderMoneyChart = (moneyCtx, points) => {
 };
 
 const renderTypeChart = (typeCtx, points) => {
-  const pointsTypes = points.map((point) => point.pointType);
+  const pointsTypes = points.map((point) => point.type);
   const uniquesTypes = makeUniquePoints(pointsTypes);
   const countTypes = uniquesTypes.map((type) => countTypesByType(points, type));
 

@@ -1,33 +1,32 @@
-import RouteInfoView from './view/route-info';
+import RouteInfoView from './view/trip-info';
 import MenuView from './view/menu';
 import TripPresenter from './presenter/trip';
 import FilterPresenter from './presenter/filter';
-// import {createPointTemplate} from './view/creation-point-form.js';
 import PointsModel from './model/points';
 import FilterModel from './model/filter';
 import StatView from './view/statistics';
-import {generatePoint} from './mock/point';
 import {render, RenderPosition, remove} from '../src/utils/render';
 import {MenuItem, UpdateType, FilterType} from './const';
+import Api from './api';
 
-const ROUTE_POINTS_NUMBER = 10;
-const points = new Array(ROUTE_POINTS_NUMBER).fill().map(generatePoint);
+const AUTHORIZATION = `Basic asdAWWe291nA2Na2k01`;
+const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
+
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const pointsModel = new PointsModel();
-pointsModel.setPoints(points);
-
 const filterModel = new FilterModel();
 
 const siteMainHeaderElement = document.querySelector(`.trip-main`);
 const siteControlsElement = siteMainHeaderElement.querySelector(`.trip-main__trip-controls`);
 const siteMenuComponent = new MenuView();
 
-render(siteMainHeaderElement, new RouteInfoView(points), RenderPosition.AFTERBEGIN);
+// render(siteMainHeaderElement, new RouteInfoView(points), RenderPosition.AFTERBEGIN);
 render(siteControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
 
 const siteTripEventsElement = document.querySelector(`.trip-events`);
 
-const tripPresenter = new TripPresenter(siteTripEventsElement, pointsModel, filterModel);
+const tripPresenter = new TripPresenter(siteTripEventsElement, pointsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteControlsElement, filterModel);
 
 let statisticComponent = null;
@@ -52,10 +51,19 @@ const handleSiteMenuClick = (menuItem) => {
 
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
-filterPresenter.init();
-tripPresenter.init();
-
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
   evt.preventDefault();
   tripPresenter.createPoint();
 });
+
+filterPresenter.init();
+tripPresenter.init();
+
+api.getAll()
+  .then((points) => {
+    pointsModel.setPoints(UpdateType.INIT, points);
+    render(siteMainHeaderElement, new RouteInfoView(points), RenderPosition.AFTERBEGIN);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
