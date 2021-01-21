@@ -9,6 +9,12 @@ const Mode = {
   EDITTING: `EDITTING`,
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`,
+};
+
 export default class Point {
   constructor(tripComponent, changeData, changeMode) {
     this._tripComponent = tripComponent;
@@ -16,7 +22,7 @@ export default class Point {
     this._changeMode = changeMode;
 
     this._pointComponent = null;
-    this._pointEditPointComponent = null;
+    this._pointEditComponent = null;
     this._mode = Mode.DEFAULT;
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
@@ -32,15 +38,15 @@ export default class Point {
     this._point = point;
 
     const prevPointComponent = this._pointComponent;
-    const prevEditPointComponent = this._pointEditPointComponent;
+    const prevEditPointComponent = this._pointEditComponent;
     this._pointComponent = new PointView(point);
-    this._pointEditPointComponent = new PointEditView(point);
+    this._pointEditComponent = new PointEditView(point);
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._pointEditPointComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._pointEditPointComponent.setEditClickHandler(this._handleEditFormClick);
-    this._pointEditPointComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._pointEditComponent.setEditClickHandler(this._handleEditFormClick);
+    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
       render(this._tripComponent, this._pointComponent, RenderPosition.BEFOREEND);
@@ -52,7 +58,8 @@ export default class Point {
     }
 
     if (this._mode === Mode.EDITTING) {
-      replace(this._pointEditPointComponent, prevEditPointComponent);
+      replace(this._pointComponent, prevEditPointComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -61,7 +68,7 @@ export default class Point {
 
   destroy() {
     remove(this._pointComponent);
-    remove(this._pointEditPointComponent);
+    remove(this._pointEditComponent);
   }
 
   resetView() {
@@ -70,15 +77,44 @@ export default class Point {
     }
   }
 
+  setViewState(state) {
+    const resetFormState = () => {
+      this._pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._pointComponent.shake(resetFormState);
+        this._pointEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
   _replacePointToEditForm() {
-    replace(this._pointEditPointComponent, this._pointComponent);
+    replace(this._pointEditComponent, this._pointComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.EDITTING;
   }
 
   _replaceEditFormToPoint() {
-    replace(this._pointComponent, this._pointEditPointComponent);
+    replace(this._pointComponent, this._pointEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
   }
@@ -86,7 +122,7 @@ export default class Point {
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
-      this._pointEditPointComponent.reset(this._point);
+      this._pointEditComponent.reset(this._point);
       this._replaceEditFormToPoint();
     }
   }
@@ -96,7 +132,7 @@ export default class Point {
   }
 
   _handleEditFormClick() {
-    this._pointEditPointComponent.reset(this._point);
+    this._pointEditComponent.reset(this._point);
     this._replaceEditFormToPoint();
   }
 
@@ -107,7 +143,7 @@ export default class Point {
         isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
         update
     );
-    this._replaceEditFormToPoint();
+
   }
 
   _handleFavoriteClick() {
