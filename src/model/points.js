@@ -65,7 +65,7 @@ export default class Points extends Observer {
             endTime: point.date_to,
           },
           price: point.base_price,
-          isFavourite: point.is_favorite,
+          isFavorite: point.is_favorite,
           destinationName: point.destination.name,
           destinationInfo: {
             description: point.destination.description,
@@ -95,16 +95,15 @@ export default class Points extends Observer {
             "description": point.destinationInfo.description,
             "pictures": point.destinationInfo.photos
           },
-          "is_favorite": point.isFavourite,
+          "is_favorite": point.isFavorite,
           "base_price": point.price
         }
     );
 
     delete adaptedPoint.date;
-    delete adaptedPoint.isFavourite;
-    delete adaptedPoint.placeImages;
-    delete adaptedPoint.placeName;
-    delete adaptedPoint.placeText;
+    delete adaptedPoint.destinationName;
+    delete adaptedPoint.destinationInfo;
+    delete adaptedPoint.isFavorite;
     delete adaptedPoint.price;
 
     return adaptedPoint;

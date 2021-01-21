@@ -1,5 +1,4 @@
 import PointNewView from '../view/create-point-form';
-import {generateId} from '../mock/point';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../const';
 
@@ -8,45 +7,70 @@ export default class PointNew {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
 
-    this._pointEditComponent = null;
+    this._pointNewComponent = null;
+    this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleCancelClick = this._handleCancelClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
-    if (this._pointEditComponent !== null) {
+  init(callback) {
+    this._destroyCallback = callback;
+
+    if (this._pointNewComponent !== null) {
       return;
     }
 
-    this._pointEditComponent = new PointNewView();
-    this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._pointEditComponent.setDeleteClickHandler(this._handleCancelClick);
+    this._pointNewComponent = new PointNewView();
+    this._pointNewComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._pointNewComponent.setCancelClickHandler(this._handleCancelClick);
 
-    render(this._pointListContainer, this._pointEditComponent, RenderPosition.AFTERBEGIN);
+    render(this._pointListContainer, this._pointNewComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   destroy() {
-    if (this._pointEditComponent === null) {
+    if (this._pointNewComponent === null) {
       return;
     }
 
-    remove(this._pointEditComponent);
-    this._pointEditComponent = null;
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
+    }
+
+    remove(this._pointNewComponent);
+    this._pointNewComponent = null;
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  setSaving() {
+    this._pointNewComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._pointNewComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._pointNewComponent.shake(resetFormState);
   }
 
   _handleFormSubmit(point) {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MINOR,
-        Object.assign({id: generateId}, point)
+        point
     );
-    this.destroy();
   }
 
   _handleCancelClick() {
