@@ -1,8 +1,10 @@
 import PointView from '../view/trip-point';
 import PointEditView from '../view/edit-route-point-form';
 import {render, RenderPosition, replace, remove} from '../utils/render';
-import {UserAction, UpdateType} from '../const';
+import {UserAction, UpdateType} from '../utils/const';
 import {isDatesEqual} from '../utils/point';
+import {toast} from '../utils/toast/toast';
+import {isOnline} from '../utils/point';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -128,6 +130,11 @@ export default class Point {
   }
 
   _handleEditClick() {
+    if (!isOnline()) {
+      toast(`You can't edit point offline`);
+      return;
+    }
+
     this._replacePointToEditForm();
   }
 
@@ -137,7 +144,13 @@ export default class Point {
   }
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast(`You can't save point offline`);
+      return;
+    }
+
     const isMinorUpdate = !isDatesEqual(this._point.date, update.date);
+
     this._changeData(
         UserAction.UPDATE_POINT,
         isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
@@ -161,6 +174,11 @@ export default class Point {
   }
 
   _handleDeleteClick(point) {
+    if (!isOnline()) {
+      toast(`You can't delete point offline`);
+      return;
+    }
+
     this._changeData(
         UserAction.DELETE_POINT,
         UpdateType.MINOR,

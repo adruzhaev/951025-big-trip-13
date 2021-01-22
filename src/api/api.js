@@ -1,5 +1,5 @@
-import PointsModel from './model/points';
-import Store from './store';
+import PointsModel from '../model/points';
+import StoreData from './storeData';
 
 const Method = {
   GET: `GET`,
@@ -38,10 +38,21 @@ export default class Api {
   getAll() {
     return Promise.all([this.getPoints(), this.getOffers(), this.getDestinations()])
       .then(([points, offers, destinations]) => {
-        Store.setOffers(offers);
-        Store.setDestinations(destinations);
+        StoreData.setOffers(offers);
+        StoreData.setDestinations(destinations);
         return Promise.resolve(points);
       });
+  }
+
+  updatePoint(point) {
+    return this._load({
+      url: `points/${point.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(PointsModel.adaptToServer(point)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then(PointsModel.adaptToClient);
   }
 
   addPoint(point) {
@@ -62,15 +73,14 @@ export default class Api {
     });
   }
 
-  updatePoint(point) {
+  sync(data) {
     return this._load({
-      url: `points/${point.id}`,
-      method: Method.PUT,
-      body: JSON.stringify(PointsModel.adaptToServer(point)),
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON)
-      .then(PointsModel.adaptToClient);
+      .then(Api.toJSON);
   }
 
   _load({

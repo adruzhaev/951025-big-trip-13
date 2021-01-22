@@ -1,9 +1,9 @@
 import he from 'he';
 import SmartView from "./smart";
-import {POINTTYPES} from "../const";
+import {POINTTYPES} from "../utils/const";
 import flatpickr from "flatpickr";
 import dayjs from "dayjs";
-import Store from '../store';
+import StoreData from '../api/storeData';
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -42,7 +42,7 @@ const createPointTypeTemplate = (currentPointType) => {
 };
 
 const createOffersTemplate = (activeType, activeOffers) => {
-  const {offers} = Store.getOffers().find((offer) => offer.type === activeType);
+  const {offers} = StoreData.getOffers().find((offer) => offer.type === activeType);
   return offers.map(({title, price}) => {
     const isActiveOffer = activeOffers.find((offer) => offer.title === title) ? `checked` : ``;
     return (`
@@ -72,7 +72,7 @@ const renderPhotos = (photos) => {
 };
 
 const createCitiesTemplate = () => {
-  const cities = Store.getDestinations().map((destination) => destination.name);
+  const cities = StoreData.getDestinations().map((destination) => destination.name);
   return cities.map((city) => {
     return `<option value="${city}"></option>`;
   }).join(``);
@@ -174,7 +174,7 @@ export default class PointEdit extends SmartView {
     super();
     this._data = PointEdit.parsePointToData(point);
     this._datepicker = null;
-    this._offersStore = Store.getOffers();
+    this._offersStore = StoreData.getOffers();
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -317,7 +317,7 @@ export default class PointEdit extends SmartView {
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
-    const newDestination = Store.getDestinations().find((place) => place.name === evt.target.value);
+    const newDestination = StoreData.getDestinations().find((place) => place.name === evt.target.value);
 
     if (!newDestination) {
       evt.target.setCustomValidity(`Выберите город из предложенного списка`);
