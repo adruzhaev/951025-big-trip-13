@@ -26,3 +26,7 @@ export const isPointPast = (date) => {
 export const isPointFuture = (date) => {
   return dayjs(date).diff(dayjs()) >= 0;
 };
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};

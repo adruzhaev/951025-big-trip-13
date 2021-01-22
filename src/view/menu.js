@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {MenuItem} from '../const';
+import {MenuItem} from '../utils/const';
 
 const createMainMenuTemplate = () => {
   return `<nav class="trip-controls__trip-tabs  trip-tabs">

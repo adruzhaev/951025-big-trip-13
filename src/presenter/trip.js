@@ -5,7 +5,7 @@ import LoadingView from '../view/loading';
 import PointPresenter, {State as PointPresenterViewState} from './point';
 import PointNewPresenter from './point-new';
 import {remove, render, RenderPosition} from '../utils/render';
-import {SortType, UpdateType, UserAction, FilterType} from '../const';
+import {SortType, UpdateType, UserAction, FilterType} from '../utils/const';
 import {sortPointByTime, sortPointByPrice, sortPointByDay} from '../utils/point';
 import {filter} from '../utils/filter';
 

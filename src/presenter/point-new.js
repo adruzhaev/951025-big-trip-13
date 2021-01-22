@@ -1,6 +1,6 @@
 import PointNewView from '../view/create-point-form';
 import {render, RenderPosition, remove} from '../utils/render';
-import {UserAction, UpdateType} from '../const';
+import {UserAction, UpdateType} from '../utils/const';
 
 export default class PointNew {
   constructor(pointListContainer, changeData) {
