@@ -383,7 +383,7 @@ export default class PointEdit extends SmartView {
   }
 
   static parseDataToPoint(data) {
-    let point = Object.assign({}, data);
+    const point = Object.assign({}, data);
 
     delete point.isOffers;
     delete point.isPhotos;
