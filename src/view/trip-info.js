@@ -28,7 +28,7 @@ const createRouteInfoTemplate = (points) => {
   const totalPrice = totalPriceCount(points);
 
   const startTime = dayjs(points[0].date.startTime).format(`MMM DD`);
-  const endTime = dayjs(points[points.length - 2].date.endTime).format(`DD`);
+  const endTime = dayjs(points[points.length - 1].date.endTime).format(`DD`);
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">

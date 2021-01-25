@@ -8,16 +8,16 @@ import StoreData from '../api/storeData';
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_POINT = {
-  id: ``,
   type: `taxi`,
   destinationName: ``,
+  destinationDescription: null,
+  destinationPhotos: null,
   date: {
     startTime: new Date(),
     endTime: new Date(),
   },
   price: 0,
   offers: [],
-  destinationInfo: null,
   isFavorite: false,
 };
 
@@ -44,11 +44,13 @@ const createPointTypeTemplate = (currentPointType) => {
 
 const createOffersTemplate = (activeType, activeOffers) => {
   const {offers} = StoreData.getOffers().find((offer) => offer.type === activeType);
-  return offers.map(({title, price}) => {
+  return `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  <div class="event__available-offers">
+    ${offers.map(({title, price}) => {
     const isActiveOffer = activeOffers.find((offer) => offer.title === title) ? `checked` : ``;
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden"
+        <input class="event__offer-checkbox visually-hidden"
           id="event-offer-${title.split(` `).join(`-`)}" type="checkbox"
           data-value="${title}"
           name="event-offer-${title.split(` `).join(`-`)}"
@@ -61,7 +63,8 @@ const createOffersTemplate = (activeType, activeOffers) => {
         </label>
       </div>
     `);
-  }).join(``);
+  }).join(``)}
+  </div>`;
 };
 
 const renderPhotos = (photos) => {
@@ -79,28 +82,31 @@ const createCitiesTemplate = () => {
   }).join(``);
 };
 
-const creatDestinationTemplate = (destination) => {
+const creatDestinationTemplate = (destinationDescription, destinationPhotos) => {
+
+  const description = destinationDescription !== null ? destinationDescription : ``;
+  const photos = destinationPhotos !== null ? renderPhotos(destinationPhotos) : ``;
+
   return `
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
+      <p class="event__destination-description">${description}</p>
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${renderPhotos(destination.photos)}
+          ${photos}
         </div>
       </div>
     </section>
   `;
 };
 
-const createEditFormTemplate = (data = BLANK_POINT) => {
+const createEditFormTemplate = (data) => {
 
-  const {type, destinationName, price, date, offers, destinationInfo, isOffers, isDisabled, isSaving, isCanceling} = data;
+  const {type, destinationName, price, date, offers, destinationDescription, destinationPhotos, isDescription, isPhotos, isOffers, isDisabled, isSaving, isCanceling} = data;
+
   const pointTypesTemaplate = createPointTypeTemplate(type);
-
   const offersTemplate = isOffers ? createOffersTemplate(type, offers) : ``;
-  const destination = destinationInfo === null ? `` : creatDestinationTemplate(destinationInfo);
-
+  const destinationTemplate = !isDescription && !isPhotos ? `` : creatDestinationTemplate(destinationDescription, destinationPhotos);
   const startTime = dayjs(date.startTime).format(`DD/MM/YYYY HH:MM`);
   const endTime = dayjs(date.endTime).format(`DD/MM/YYYY HH:MM`);
   const cities = createCitiesTemplate();
@@ -150,18 +156,15 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? `disabled` : ``}>${isSaving ? `Saving...` : `Save`}</button>
-        <button class="event__reset-btn" type="reset" ${isCanceling ? `disabled` : ``}>${isCanceling ? `Canceling...` : `Cancel`}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? `disabled` : ``}>${isCanceling ? `Canceling...` : `Cancel`}</button>
       </header>
       <section class="event__details">
 
         <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-            ${offersTemplate}
-          </div>
+          ${offersTemplate}
         </section>
 
-        ${destination}
+        ${destinationTemplate}
       </section>
     </form>
   </li>`;
@@ -323,10 +326,9 @@ export default class PointNew extends SmartView {
 
     this.updateData({
       destinationName: newDestination.name,
-      destinationInfo: {
-        description: newDestination.description,
-        photos: newDestination.pictures,
-      },
+      destinationDescription: newDestination.description,
+      destinationPhotos: newDestination.pictures,
+      isPhotos: newDestination.pictures ? true : false,
     });
   }
 
@@ -363,7 +365,9 @@ export default class PointNew extends SmartView {
         {},
         point,
         {
-
+          isOffers: point.offers.length > 0,
+          isDescription: point.destinationPhotos !== null,
+          isPhotos: point.destinationPhotos !== null,
           isDisabled: false,
           isSaving: false,
           isCanceling: false,
@@ -378,7 +382,8 @@ export default class PointNew extends SmartView {
     );
 
     delete point.isOffers;
-    delete point.isDestinationInfo;
+    delete point.isDescription;
+    delete point.isPhotos;
     delete point.isDisabled;
     delete point.isSaving;
     delete point.isCanceling;

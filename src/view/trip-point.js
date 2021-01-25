@@ -1,9 +1,8 @@
-import AbstractView from "./abstract";
-import dayjs from "dayjs";
+import AbstractView from './abstract';
+import {getEventDuration} from '../utils/point';
+import dayjs from 'dayjs';
 
 const createOffersTemplate = (offers) => {
-  // const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
-
   return offers.map(({title, price}) => {
     return (`<li class="event__offer">
       <span class="event__offer-title">${title}</span>
@@ -23,6 +22,8 @@ const createRoutePointTemplate = (point) => {
   const startTime = dayjs(date.startTime).format(`hh:mm`);
   const endTime = dayjs(date.endTime).format(`hh:mm`);
 
+  const duration = getEventDuration(date.startTime, date.endTime);
+
   const favoriteClassName = isFavorite
     ? `event__favorite-btn event__favorite-btn--active`
     : `event__favorite-btn`;
@@ -40,7 +41,7 @@ const createRoutePointTemplate = (point) => {
           &mdash;
           <time class="event__end-time" datetime="2019-03-18T11:00">${endTime}</time>
         </p>
-        <p class="event__duration">30M</p>
+        <p class="event__duration">${duration}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>

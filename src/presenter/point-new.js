@@ -1,4 +1,4 @@
-import PointNewView from '../view/create-point-form';
+import PointNewView from '../view/point-create-form';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 
@@ -58,7 +58,7 @@ export default class PointNew {
       this._pointNewComponent.updateData({
         isDisabled: false,
         isSaving: false,
-        isDeleting: false
+        isCanceling: false
       });
     };
 

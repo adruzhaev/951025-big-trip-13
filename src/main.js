@@ -1,6 +1,6 @@
 import RouteInfoView from './view/trip-info';
 import MenuView from './view/menu';
-import StatView from './view/statistics';
+import StatisticsView from './view/statistics';
 import PointAddButtonView from './view/point-add-button';
 import TripPresenter from './presenter/trip';
 import FilterPresenter from './presenter/filter';
@@ -38,7 +38,7 @@ const filterPresenter = new FilterPresenter(siteControlsElement, filterModel);
 
 let statisticComponent = null;
 
-const handleSiteMenuClick = (menuItem) => {
+const onSiteMenuClickHandler = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       remove(statisticComponent);
@@ -49,14 +49,14 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
-      statisticComponent = new StatView(pointsModel.getPoints());
+      statisticComponent = new StatisticsView(pointsModel.getPoints());
       render(siteTripEventsElement, statisticComponent, RenderPosition.BEFOREEND);
       siteMenuComponent.setMenuItem(MenuItem.STATS);
       break;
   }
 };
 
-const handleNewPointClose = () => {
+const onNewPointCloseHandler = () => {
   pointAddButtonComponent.makeEnabled();
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
 };
@@ -71,7 +71,7 @@ const handleAddButtonClick = () => {
     siteMenuComponent.setMenuItem(MenuItem.TABLE);
     return;
   }
-  tripPresenter.createPoint(handleNewPointClose);
+  tripPresenter.createPoint(onNewPointCloseHandler);
   pointAddButtonComponent.makeDisabled();
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
 };
@@ -81,17 +81,16 @@ tripPresenter.init();
 
 apiWithProvider.getAll()
   .then((points) => {
-    console.log(points);
     pointsModel.setPoints(UpdateType.INIT, points);
-    render(siteMainHeaderElement, new RouteInfoView(points), RenderPosition.AFTERBEGIN);
+    render(siteMainHeaderElement, new RouteInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
   })
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT, []);
   })
   .finally(() => {
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
     render(siteControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
     render(siteMainHeaderElement, pointAddButtonComponent, RenderPosition.BEFOREEND);
+    siteMenuComponent.setMenuClickHandler(onSiteMenuClickHandler);
     pointAddButtonComponent.setAddButtonClickHandler(handleAddButtonClick);
   });
 

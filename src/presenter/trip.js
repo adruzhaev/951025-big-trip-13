@@ -200,11 +200,11 @@ export default class Trip {
 
     if (this._getPoints().length === 0) {
       this._renderNoPoints();
-    } else {
-      this._renderSort();
-      render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
+      return;
     }
 
+    this._renderSort();
+    render(this._tripContainer, this._tripComponent, RenderPosition.BEFOREEND);
     this._renderPoints();
   }
 }
