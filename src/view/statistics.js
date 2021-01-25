@@ -8,6 +8,7 @@ const BAR_HEIGHT = 55;
 const renderMoneyChart = (moneyCtx, points) => {
   const pointsTypes = points.map((point) => point.type);
   const uniquePoints = makeUniquePoints(pointsTypes);
+  const upperCaseTypes = uniquePoints.map((type) => type.toUpperCase());
   const moneyByTypes = uniquePoints.map((type) => countMoneyByType(points, type));
 
   moneyCtx.height = uniquePoints.length * BAR_HEIGHT;
@@ -16,7 +17,7 @@ const renderMoneyChart = (moneyCtx, points) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: uniquePoints,
+      labels: upperCaseTypes,
       datasets: [{
         data: moneyByTypes,
         backgroundColor: `#ffffff`,
@@ -80,16 +81,17 @@ const renderMoneyChart = (moneyCtx, points) => {
 
 const renderTypeChart = (typeCtx, points) => {
   const pointsTypes = points.map((point) => point.type);
-  const uniquesTypes = makeUniquePoints(pointsTypes);
-  const countTypes = uniquesTypes.map((type) => countTypesByType(points, type));
+  const uniqueTypes = makeUniquePoints(pointsTypes);
+  const upperCaseTypes = uniqueTypes.map((type) => type.toUpperCase());
+  const countTypes = uniqueTypes.map((type) => countTypesByType(points, type));
 
-  typeCtx.height = uniquesTypes.length * BAR_HEIGHT;
+  typeCtx.height = uniqueTypes.length * BAR_HEIGHT;
 
   return new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: uniquesTypes,
+      labels: upperCaseTypes,
       datasets: [{
         data: countTypes,
         backgroundColor: `#ffffff`,
@@ -151,18 +153,19 @@ const renderTypeChart = (typeCtx, points) => {
   });
 };
 
-const renderTimeChart = (timeCtx, events) => {
-  const eventsTypes = events.map((event) => event.type);
-  const uniqTypes = makeUniquePoints(eventsTypes);
-  const durationsByTypes = uniqTypes.map((type) => countDurationByType(events, type));
+const renderTimeChart = (timeCtx, points) => {
+  const eventsTypes = points.map((point) => point.type);
+  const uniqueTypes = makeUniquePoints(eventsTypes);
+  const upperCaseTypes = uniqueTypes.map((type) => type.toUpperCase());
+  const durationsByTypes = uniqueTypes.map((type) => countDurationByType(points, type));
 
-  timeCtx.height = uniqTypes.length * BAR_HEIGHT;
+  timeCtx.height = uniqueTypes.length * BAR_HEIGHT;
 
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: uniqTypes,
+      labels: upperCaseTypes,
       datasets: [{
         data: durationsByTypes,
         backgroundColor: `#ffffff`,
@@ -184,7 +187,7 @@ const renderTimeChart = (timeCtx, events) => {
       },
       title: {
         display: true,
-        text: `TYPE`,
+        text: `TIME-SPEND`,
         fontColor: `#000000`,
         fontSize: 23,
         position: `left`
@@ -266,6 +269,12 @@ export default class Statistics extends SmartView {
       this._datepicker.destroy();
       this._datepicker = null;
     }
+
+    if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
+      this._moneyChart = null;
+      this._typeChart = null;
+      this._timeChart = null;
+    }
   }
 
   restoreHandlers() {
@@ -273,17 +282,18 @@ export default class Statistics extends SmartView {
   }
 
   _setCharts() {
-    if (this._moneyChart !== null || this._typeChart !== null) {
+    if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
       this._moneyChart = null;
       this._typeChart = null;
+      this._timeChart = null;
     }
 
     const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
     const typeCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    this._moneyChart = renderMoneyChart(moneyCtx, this._points._points);
-    this._typeChart = renderTypeChart(typeCtx, this._points._points);
-    this._timeChart = renderTimeChart(timeCtx, this._points._points);
+    this._moneyChart = renderMoneyChart(moneyCtx, this._points);
+    this._typeChart = renderTypeChart(typeCtx, this._points);
+    this._timeChart = renderTimeChart(timeCtx, this._points);
   }
 }

@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 export const makeUniquePoints = (points) => [...new Set(points)];
 
@@ -15,11 +18,12 @@ export const countTypesByType = (points, type) => {
 };
 
 export const countDurationByType = (points, type) => {
-  const typeEvents = points.filter((point) => point.type === type);
+  const typePoints = points.filter((point) => point.type === type);
 
-  return typeEvents.reduce((sum, point) => {
-    const diff = dayjs(point.date.endTime).diff(dayjs(point.date.startTime));
-    const days = dayjs.duration(diff).days();
+  return typePoints.reduce((sum, point) => {
+    const pointDuration = dayjs(point.date.endTime).diff(dayjs(point.date.startTime));
+
+    const days = dayjs.duration(pointDuration).days();
     return sum + days;
   }, 0);
 };

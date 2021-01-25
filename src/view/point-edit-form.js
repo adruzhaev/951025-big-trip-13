@@ -10,13 +10,14 @@ import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 const BLANK_POINT = {
   type: `taxi`,
   destinationName: ``,
+  destinationDescription: ``,
+  destinationPhotos: null,
   date: {
     startTime: new Date(),
     endTime: new Date(),
   },
   price: 0,
   offers: [],
-  destinationInfo: null,
   isFavorite: false,
 };
 
@@ -43,11 +44,13 @@ const createPointTypeTemplate = (currentPointType) => {
 
 const createOffersTemplate = (activeType, activeOffers) => {
   const {offers} = StoreData.getOffers().find((offer) => offer.type === activeType);
-  return offers.map(({title, price}) => {
+  return `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  <div class="event__available-offers">
+    ${offers.map(({title, price}) => {
     const isActiveOffer = activeOffers.find((offer) => offer.title === title) ? `checked` : ``;
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden"
+        <input class="event__offer-checkbox visually-hidden"
           id="event-offer-${title.split(` `).join(`-`)}" type="checkbox"
           data-value="${title}"
           name="event-offer-${title.split(` `).join(`-`)}"
@@ -60,15 +63,16 @@ const createOffersTemplate = (activeType, activeOffers) => {
         </label>
       </div>
     `);
-  }).join(``);
+  }).join(``)}
+  </div>`;
 };
 
 const renderPhotos = (photos) => {
-  return photos.map((photo) => {
-    return `
-      <img class="event__photo" src="${photo.src}" alt="${photo.description}">
-    `;
-  }).join(``);
+  return `<div class="event__photos-container">
+  <div class="event__photos-tape">
+    ${photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(``)}
+  </div>
+</div>`;
 };
 
 const createCitiesTemplate = () => {
@@ -78,31 +82,17 @@ const createCitiesTemplate = () => {
   }).join(``);
 };
 
-const creatDestinationTemplate = (destination) => {
-  return `
-    <section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
-      <div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${renderPhotos(destination.photos)}
-        </div>
-      </div>
-    </section>
-  `;
-};
-
 const createEditFormTemplate = (data = BLANK_POINT) => {
 
-  const {type, destinationName, price, date, offers, destinationInfo, isOffers, isDisabled, isSaving, isDeleting} = data;
+  const {type, destinationName, price, date, offers, destinationDescription, destinationPhotos, isOffers, isPhotos, isDisabled, isSaving, isDeleting} = data;
+
   const pointTypesTemaplate = createPointTypeTemplate(type);
-
   const offersTemplate = isOffers ? createOffersTemplate(type, offers) : ``;
-  const destination = destinationInfo === null ? `` : creatDestinationTemplate(destinationInfo);
-
   const startTime = dayjs(date.startTime).format(`DD/MM/YYYY HH:MM`);
   const endTime = dayjs(date.endTime).format(`DD/MM/YYYY HH:MM`);
-  const cities = createCitiesTemplate();
+  const citiesTemplate = createCitiesTemplate();
+
+  const imagesTemplate = isPhotos ? renderPhotos(destinationPhotos) : ``;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -128,7 +118,7 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" name="event-destination-1" value="${he.encode(destinationName)}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${cities}
+            ${citiesTemplate}
           </datalist>
         </div>
 
@@ -157,13 +147,16 @@ const createEditFormTemplate = (data = BLANK_POINT) => {
       <section class="event__details">
 
         <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-            ${offersTemplate}
-          </div>
+          ${offersTemplate}
         </section>
 
-        ${destination}
+        <section class="event__section event__section--destination">
+          <h3 class="event__section-title event__section-title--destination">Destination</h3>
+          <p class="event__destination-description">${destinationDescription}</p>
+          ${imagesTemplate}
+        </section>
+      </section>
+
       </section>
     </form>
   </li>`;
@@ -327,10 +320,13 @@ export default class PointEdit extends SmartView {
 
     this.updateData({
       destinationName: newDestination.name,
-      destinationInfo: {
-        description: newDestination.description,
-        photos: newDestination.pictures,
-      },
+      // destinationInfo: {
+      //   description: newDestination.description,
+      //   photos: newDestination.pictures,
+      // },
+      destinationDescription: newDestination.description,
+      destinationPhotos: newDestination.pictures,
+      isPhotos: newDestination.pictures ? true : false,
     });
   }
 
@@ -378,6 +374,7 @@ export default class PointEdit extends SmartView {
         point,
         {
           isOffers: point.offers.length > 0,
+          isPhotos: point.destinationPhotos !== null,
           isDisabled: false,
           isSaving: false,
           isDeleting: false,
@@ -389,7 +386,7 @@ export default class PointEdit extends SmartView {
     let point = Object.assign({}, data);
 
     delete point.isOffers;
-    delete point.isDestinationInfo;
+    delete point.isPhotos;
     delete point.isDisabled;
     delete point.isSaving;
     delete point.isDeleting;

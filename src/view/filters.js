@@ -21,7 +21,6 @@ const createFilterTemplate = (filter, currentFilterType) => {
 };
 
 const createFiltersTemplate = (filterItems, currentFilterType) => {
-  // const filters = [`Everything`, `Future`, `Past`];
   const filterItemsTemplate = filterItems
     .map((filter) => createFilterTemplate(filter, currentFilterType))
     .join(``);

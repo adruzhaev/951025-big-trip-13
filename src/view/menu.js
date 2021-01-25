@@ -3,8 +3,8 @@ import {MenuItem} from '../utils/const';
 
 const createMainMenuTemplate = () => {
   return `<nav class="trip-controls__trip-tabs  trip-tabs">
-    <a class="trip-tabs__btn trip-tabs__btn--active" href="#" data-value=${MenuItem.TABLE}>Table</a>
-    <a class="trip-tabs__btn" href="#" data-value=${MenuItem.STATS}>Stats</a>
+    <a class="trip-tabs__btn trip-tabs__btn--active" href="#" data-value="${MenuItem.TABLE}">Table</a>
+    <a class="trip-tabs__btn" href="#" data-value="${MenuItem.STATS}">Stats</a>
   </nav>`;
 };
 export default class Menu extends AbstractView {
