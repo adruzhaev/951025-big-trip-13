@@ -38,5 +38,4 @@ export default class Menu extends AbstractView {
       item.classList.add(`trip-tabs__btn--active`);
     }
   }
-
 }
