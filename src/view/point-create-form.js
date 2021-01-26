@@ -376,7 +376,7 @@ export default class PointNew extends SmartView {
   }
 
   static parseDataToPoint(data) {
-    let point = Object.assign(
+    const point = Object.assign(
         {},
         data
     );

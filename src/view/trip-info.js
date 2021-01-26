@@ -2,9 +2,9 @@ import AbstractView from "./abstract";
 import dayjs from "dayjs";
 
 const destinationPointsSearch = (points) => {
-  let destinationPoints = [];
+  const destinationPoints = [];
 
-  for (let point of points) {
+  for (const point of points) {
     destinationPoints.push(point.destinationName);
   }
 
@@ -14,7 +14,7 @@ const destinationPointsSearch = (points) => {
 const totalPriceCount = (points) => {
   let totalPrice = 0;
 
-  for (let point of points) {
+  for (const point of points) {
     totalPrice += point.price;
   }
 

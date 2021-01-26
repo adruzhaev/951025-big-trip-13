@@ -320,10 +320,6 @@ export default class PointEdit extends SmartView {
 
     this.updateData({
       destinationName: newDestination.name,
-      // destinationInfo: {
-      //   description: newDestination.description,
-      //   photos: newDestination.pictures,
-      // },
       destinationDescription: newDestination.description,
       destinationPhotos: newDestination.pictures,
       isPhotos: newDestination.pictures ? true : false,
@@ -383,7 +379,7 @@ export default class PointEdit extends SmartView {
   }
 
   static parseDataToPoint(data) {
-    let point = Object.assign({}, data);
+    const point = Object.assign({}, data);
 
     delete point.isOffers;
     delete point.isPhotos;
