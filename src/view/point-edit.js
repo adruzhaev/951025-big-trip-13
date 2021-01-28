@@ -3,7 +3,7 @@ import SmartView from "./smart";
 import {POINTTYPES} from "../utils/const";
 import flatpickr from "flatpickr";
 import dayjs from "dayjs";
-import StoreData from '../api/storeData';
+import StoreData from '../api/store-data';
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 

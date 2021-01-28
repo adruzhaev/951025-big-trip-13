@@ -1,4 +1,3 @@
-import RouteInfoView from './view/trip-info';
 import MenuView from './view/menu';
 import StatisticsView from './view/statistics';
 import PointAddButtonView from './view/point-add-button';
@@ -13,6 +12,8 @@ import {isOnline} from './utils/point';
 import Api from './api/api';
 import Store from './api/store';
 import Provider from './api/provider';
+
+import TripInfoPresenter from './presenter/trip-info';
 
 const AUTHORIZATION = `Basic asdAWWe291nA2Na2k01`;
 const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
@@ -34,7 +35,10 @@ const siteMenuComponent = new MenuView();
 const pointAddButtonComponent = new PointAddButtonView();
 
 const tripPresenter = new TripPresenter(siteTripEventsElement, pointsModel, filterModel, apiWithProvider);
-const filterPresenter = new FilterPresenter(siteControlsElement, filterModel);
+const filterPresenter = new FilterPresenter(siteControlsElement, pointsModel, filterModel);
+const tripInfoPresenter = new TripInfoPresenter(siteMainHeaderElement, pointsModel);
+
+tripInfoPresenter.init();
 
 let statisticComponent = null;
 
@@ -82,7 +86,6 @@ tripPresenter.init();
 apiWithProvider.getAll()
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
-    render(siteMainHeaderElement, new RouteInfoView(pointsModel.getPoints()), RenderPosition.AFTERBEGIN);
   })
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT, []);

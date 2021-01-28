@@ -1,6 +1,6 @@
-import SortView from '../view/sorting';
+import SortView from '../view/sort';
 import TripEventsListView from '../view/trip-events-list';
-import NoPointView from '../view/no-route-point';
+import NoPointView from '../view/no-point';
 import LoadingView from '../view/loading';
 import PointPresenter, {State as PointPresenterViewState} from './point';
 import PointNewPresenter from './point-new';
@@ -63,13 +63,15 @@ export default class Trip {
     const filteredPoints = filter[filterType](points);
 
     switch (this._currentSortType) {
+      case SortType.DAY:
+        return filteredPoints.sort(sortPointByDay);
       case SortType.PRICE:
         return filteredPoints.sort(sortPointByPrice);
       case SortType.TIME:
         return filteredPoints.sort(sortPointByTime);
+      default:
+        return filteredPoints;
     }
-
-    return filteredPoints.sort(sortPointByDay);
   }
 
   _handleModeChange() {

@@ -1,5 +1,5 @@
 import PointsModel from '../model/points';
-import StoreData from './storeData';
+import StoreData from './store-data';
 
 const Method = {
   GET: `GET`,

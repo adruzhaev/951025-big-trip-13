@@ -2,7 +2,7 @@ import AbstractView from "./abstract";
 
 const createFilterTemplate = (filter, currentFilterType) => {
 
-  const {type, name} = filter;
+  const {type, name, pointLength} = filter;
 
   return `
     <div class="trip-filters__filter">
@@ -13,6 +13,7 @@ const createFilterTemplate = (filter, currentFilterType) => {
         name="trip-filter"
         value="${name.toLowerCase()}"
         ${type === currentFilterType ? `checked` : ``}
+        ${pointLength === 0 ? `disabled` : ``}
       />
       <label class="trip-filters__filter-label"
         for="filter-${name.toLowerCase()}">${name}

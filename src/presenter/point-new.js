@@ -1,4 +1,4 @@
-import PointNewView from '../view/point-create-form';
+import PointNewView from '../view/point-new';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 

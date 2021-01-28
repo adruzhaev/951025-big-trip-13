@@ -1,11 +1,13 @@
-import FilterView from '../view/filters';
+import FilterView from '../view/filter';
 import {render, RenderPosition, replace, remove} from '../utils/render';
 import {FilterType, UpdateType} from '../utils/const';
+import {filter} from '../utils/filter';
 
 export default class Filter {
-  constructor(filterContainer, filterModel) {
+  constructor(filterContainer, pointsModel, filterModel) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
+    this._pointsModel = pointsModel;
 
     this._currentFilter = null;
     this._filterComponent = null;
@@ -14,6 +16,7 @@ export default class Filter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._filterModel.addObserver(this._handleModelEvent);
+    this._pointsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -47,18 +50,23 @@ export default class Filter {
   }
 
   _getFilters() {
+    const points = this._pointsModel.getPoints();
+
     return [
       {
         type: FilterType.EVERYTHING,
         name: `EVERYTHING`,
+        pointLength: filter[FilterType.EVERYTHING](points).length,
       },
       {
         type: FilterType.FUTURE,
         name: `FUTURE`,
+        pointLength: filter[FilterType.FUTURE](points).length,
       },
       {
         type: FilterType.PAST,
         name: `PAST`,
+        pointLength: filter[FilterType.PAST](points).length,
       }
     ];
   }

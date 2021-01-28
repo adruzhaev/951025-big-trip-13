@@ -1,4 +1,4 @@
-import StoreData from './storeData';
+import StoreData from './store-data';
 import PointsModel from '../model/points';
 import {isOnline} from '../utils/point';
 
